@@ -9,6 +9,9 @@ body {
     width: 80vw;
     height: 30vh;
     margin: 40px;
+    background-color: #dd8888;
+    color: black;
+    border: 5px solid black;
     transition-duration: 4ms;
     transition-timing-function: ease;
     animation-name: turn;

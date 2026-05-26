@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="menu.css">
 </head>
 <body>
-    <button id="create-game-btn" class="animated-btn"></button>
-    <button id="join-game-btn" class="animated-btn"></button>
+    <button id="create-game-btn" class="animated-btn">CRÉER UNE PARTIE</button>
+    <button id="join-game-btn" class="animated-btn">REJOINDRE UNE PARTIE</button>
 </body>
 </html>
