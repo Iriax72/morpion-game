@@ -1,3 +1,10 @@
+<?php
+// menu.php
+
+// page du menu avec boutons
+// btn 1: créer une game
+// btn 2: rejoindre une game
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>

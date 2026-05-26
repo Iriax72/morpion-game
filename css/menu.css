@@ -1,3 +1,9 @@
+/*
+css/memu.css
+
+contient le css pour la page du menu (menu.php)
+*/
+
 body {
     display: flex;
     flex-direction: column;
