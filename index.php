@@ -15,6 +15,14 @@ try {
     die('<p style="color: red;">Erreur d\'initialisation de la base de données: ' . $e->getMessage() . '</p>');
 }
 
+$pdo = get_db_connection();
+$stmt = $pdo->prepare('INSERT INTO users (id) VALUES (?)');
+try {
+    $stmt->execute([$_SESSION['user_id']]);
+} catch (PDOException $e) {
+    die('<p style="color: red;">Erreur d\´insertion dans la db:' . $e->getMessage() . '</p>');
+}
+
 header('Location: ./menu.php');
 exit;
 ?>

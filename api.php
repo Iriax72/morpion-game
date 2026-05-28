@@ -4,9 +4,6 @@ api.php
 
 Ce fichier ne retourne pas de HTML, mais uniquement des données en json
 Méthodes disponibles:
-- POST /api.php?action=connect_as&user_id=USER_ID
-    => Créer un champ dans la db users avec l'user_id fourni, et le connecter
-
 - POST /api.php?action=create_game_token&user_id=USER_ID
     => Crée une nouvelle partie et un token pour s'y connecter
 ! Faille de sécurité : n'inporte qui leur créer une partie au nom d'un autre user en indiquant son id.
@@ -30,27 +27,6 @@ $action = $_REQUEST['action'] ?? '';
 try{
 
 switch($action) {
-    case 'connect_as':
-        if (!isset($_REQUEST['user_id'])) {
-            http_response_code(400);
-            echo json_encode(['error' => 'user_id manqiant']);
-            exit;
-        }
-        $user_id = $_REQUEST['user_id'];
-
-        //récupère la pdo
-        $pdo = get_db_connection();
-
-        try {
-            //insère le nouvel user dans la db
-            $stmt = $pdo->prepare('INSERT INTO users (id) VALUES (?)');
-            $stmt->execute([$user_id]);
-        } catch (PDOException $e) {
-            http_response_code(500);
-            echo json_encode(['error' => 'Erreur serveur: ' . $e->getMessage()]);
-        }
-        echo json_encode(['success' => true]);
-        break;
     
     case 'create_game_token':
         if (!isset($_REQUEST['user_id'])) {

@@ -8,6 +8,14 @@
 if (session_status() === PHP_SESSION_NONE) {
     session_start();
     $_SESSION['user_id'] = bin2hex(random_bytes(16));
+
+    $pdo = get_db_connection();
+    $stmt = $pdo->prepare('INSERT INTO users (id) VALUES (?)');
+    try {
+        $stmt->execute([$_SESSION['user_id']]);
+    } catch (PDOExeption $e) {
+        die('<p style="color: red;">Erreur d\'insertion dans la db: ' . $e->getMessage() . '</p>');
+    }
 }
 ?>
 <!DOCTYPE html>
