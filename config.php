@@ -42,22 +42,21 @@ function get_db_connection(): PDO {
 function init_db(): void {
     $pdo = get_db_connection();
 
-    //table games (id, created_at, created_by, player2)
-    $pdo->exec('
-    CREATE TABLE IF NOT EXISTS games (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        token VARCHAR(10) UNIQUE NOT NULL,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        created_by INT NOT NULL FOREIGN KEY REFERENCES users(id),
-        player2 INT DEFAULT NULL FOREIGN KEY REFERENCES users(id)
-    );');
-
-    //table users (id, connected_at, last_seen)
+    //table users (id, conmected_at)
     $pdo->exec('
     CREATE TABLE IF NOT EXISTS users (
         id INT UNIQUE NOT NULL PRIMARY KEY,
         connected_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        last_seen DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    );');
+
+    //table games (id, created_at, created_by, player2)
+    $pdo->exec('
+    CREATE TABLE IF NOT EXISTS games (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        token VARCHAR(12) UNIQUE NOT NULL,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        created_by INT NOT NULL FOREIGN KEY REFERENCES users(id),
+        player2 INT DEFAULT NULL FOREIGN KEY REFERENCES users(id)
     );');
 }
 ?>
