@@ -40,4 +40,9 @@ createGameBtn.addEventListener('click', () => {
     div.appendChild(crossBtn);
     document.body.appendChild(div);
     document.body.appendChild(crossBtn);
+});
+
+joinGameBtn.addEventListener('click', () => {
+    // TODO: demander le token
+    // faire la requete api grace au token
 })

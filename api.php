@@ -7,7 +7,7 @@ Méthodes disponibles:
 - POST /api.php?action=create_game_token&user_id=USER_ID
     => Crée une nouvelle partie et un token pour s'y connecter
 ! Faille de sécurité : n'inporte qui leur créer une partie au nom d'un autre user en indiquant son id.
-TODO: régler ça en utilisant le systeme de session
+TODO: régler ça
 
 - POST /api.php?action=join_game&token=TOKEN
     => Rejoindre la partie existante avec le TOKEN
@@ -57,6 +57,10 @@ switch($action) {
             exit;
         }
         echo json_encode(['success' => true, 'token' => $token]);
+        break;
+
+    case 'join_game':
+        // TODO : implémenter ça
         break;
 }
 //attraper toutes les erreurs imprévues
