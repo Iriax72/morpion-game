@@ -6,7 +6,7 @@
 // Redirection de l'user vers la bonne password_get_info
 
 session_start();
-$_SESSION['user_id'] = bin2hex(random_bytes(16));
+$_SESSION['user_id'] = bin2hex(random_bytes(16)); // TODO: faille de disponibilité si plusieurs user obtiennent le même id.
 
 require_once __DIR__ . '/config.php';
 try {

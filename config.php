@@ -50,14 +50,14 @@ function init_db(): void {
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         created_by INT NOT NULL FOREIGN KEY REFERENCES users(id),
         player2 INT DEFAULT NULL FOREIGN KEY REFERENCES users(id)
-    ');
+    );');
 
     //table users (id, connected_at, last_seen)
     $pdo->exec('
     CREATE TABLE IF NOT EXISTS users (
-        id INT AUTO_INCREMENT PRIMARY KEY,
+        id INT UNIQUE NOT NULL PRIMARY KEY,
         connected_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         last_seen DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-    ');
+    );');
 }
 ?>
