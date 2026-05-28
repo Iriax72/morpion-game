@@ -19,6 +19,7 @@ body {
     color: black;
     font-size: 2.1rem;
     border: 5px solid black;
+    border-radius: 20px;
     transition-duration: 4ms;
     transition-timing-function: ease;
     animation: turn 3s infinite ease;
@@ -32,4 +33,29 @@ body {
     0% {transform: rotate(-10deg);}
     50% {transform: rotate(10deg);}
     100% {transform: rotate(-10deg);}
+}
+
+.access-code-div {
+    width: 85vw;
+    height: 85vh;
+    background-color: #dddddd;
+    color: black;
+    font-size: 3rem;
+    border: 12px solid black;
+    border-radius:  20px;
+    z-index: 1000;
+}
+
+.cross-btn {
+    position: absolute;
+    top: 40px;
+    right: 40px;
+    width: 50px;
+    height: 50px;
+    background-color: red;
+    color: white;
+    font-size: 2rem;
+    border: none;
+    border-radius: 50%;
+    z-index: 1001;
 }
