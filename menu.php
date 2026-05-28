@@ -9,6 +9,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
     $_SESSION['user_id'] = bin2hex(random_bytes(16));
 
+    require_once __DIR__ . '/config.php';
     $pdo = get_db_connection();
     $stmt = $pdo->prepare('INSERT INTO users (id) VALUES (?)');
     try {
