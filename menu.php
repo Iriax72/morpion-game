@@ -13,7 +13,7 @@ if (session_status() === PHP_SESSION_NONE) {
     $stmt = $pdo->prepare('INSERT INTO users (id) VALUES (?)');
     try {
         $stmt->execute([$_SESSION['user_id']]);
-    } catch (PDOExeption $e) {
+    } catch (PDOException $e) {
         die('<p style="color: red;">Erreur d\'insertion dans la db: ' . $e->getMessage() . '</p>');
     }
 }

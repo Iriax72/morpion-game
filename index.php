@@ -20,7 +20,7 @@ $stmt = $pdo->prepare('INSERT INTO users (id) VALUES (?)');
 try {
     $stmt->execute([$_SESSION['user_id']]);
 } catch (PDOException $e) {
-    die('<p style="color: red;">Erreur d\´insertion dans la db:' . $e->getMessage() . '</p>');
+    die('<p style="color: red;">Erreur d\'insertion dans la db:' . $e->getMessage() . '</p>');
 }
 
 header('Location: ./menu.php');

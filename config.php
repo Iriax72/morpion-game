@@ -45,7 +45,7 @@ function init_db(): void {
     //table users (id, connected_at)
     $pdo->exec('
     CREATE TABLE IF NOT EXISTS users (
-        id INT PRIMARY KEY,
+        id VARCHAR(32) PRIMARY KEY,
         connected_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );');
 
@@ -55,8 +55,8 @@ function init_db(): void {
         id INT AUTO_INCREMENT PRIMARY KEY,
         token VARCHAR(12) UNIQUE NOT NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        created_by INT NOT NULL,
-        player2 INT DEFAULT NULL,
+        created_by VARCHAR(32) NOT NULL,
+        player2 VARCHAR(32) DEFAULT NULL,
         FOREIGN KEY (created_by) REFERENCES users(id),
         FOREIGN KEY (player2) REFERENCES users(id)
     );');
