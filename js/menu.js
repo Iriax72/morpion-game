@@ -13,15 +13,34 @@ const joinGameBtn = document.querySelector('#join-game-btn');
 
 // Fonctions utilitaires:
 function createPopup(content = []) {
-    // le paramètre content doit etre un tableau d'éléments DOM ou strings ou la valeur 'CROSS_BTN'
+    // le paramètre content peut être un tableau d'éléments DOM, de strings, ou contenir 'CROSS_BTN'
     const div = document.createElement('div');
     div.classList.add('popup');
+    let addCrossBtn = false;
+
     content.forEach(element => {
-        div.appendChild(element); // TODO: sécuriser en cas d'injection malveillante
+        // gérer la valeur 'CROS_BTN'
+        if (element === 'CROSS_BTN') {
+            addCrossBtn = true;
+            return;
+        }
+        // gérer les string
+        if (typeof element === 'string') {
+            const textNode = document.createTextNode(element);
+            div.appendChild(textNode);
+            return;
+        }
+        // gérer les élements HTML
+        if (element instanceof Node) {
+            div.appendChild(element);
+            return;
+        }
+        // gérer tout le reste
+        console.warn('createPopup: élément non pris en charge', element);
     });
 
-    if ('CROSS_BTN' in content) {
-        const crossBtn = document.createElement('btn');
+    if (addCrossBtn) {
+        const crossBtn = document.createElement('button');
         crossBtn.innerText = 'x';
         crossBtn.classList.add('cross-Btn');
         crossBtn.addEventListener('click', () => {
@@ -29,6 +48,7 @@ function createPopup(content = []) {
         });
         div.appendChild(crossBtn);
     }
+
     return div;
 }
 
