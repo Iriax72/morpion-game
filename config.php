@@ -69,7 +69,7 @@ function init_db(): void {
         notified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         notification_type VARCHAR(20) NOT NULL,
         notification_data JSON NOT NULL,
-        notified_by INT NOT NULL,
+        notified_by VARCHAR(32) NOT NULL,
         FOREIGN KEY (game_id) REFERENCES games(id),
         FOREIGN KEY (notified_by) REFERENCES users(id)
     );');
