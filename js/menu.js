@@ -75,7 +75,7 @@ createGameBtn.addEventListener('click', () => {
             }
         });
     })
-    const popup = createPopup(['En attente de votre code d\'accès...', annuler]); // TODO
+    const popup = createPopup(['En attente de votre code d\'accès...', annuler]); // TODO: ce annuler ne va rien annuler puisque la partie n'a pas encore été crée ! Si le boutton et cliqué, l'api ne trouve rien a delete mais la création de la partie n'est pas annulée 
     document.body.appendChild(popup);
     
     // damande un token au serveur
