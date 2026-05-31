@@ -1,0 +1,66 @@
+<?php
+/*
+stream.php
+
+Ce fichier envoie les notifications en temps réel aux clients
+Il s'occupe des SSE 
+*/
+
+// enlever les warning qui pourraient corrompre le json
+ini_set('display_errors', '0');
+error_reporting(0);
+ob_start();
+
+// Inclure le config pour la db
+require_once __DIR__ . '/config.php';
+$pdo = get_db_connection();
+
+// les headers nécessaires aux SSE
+header('Content-Type: text/event-stream');
+header('Cache-Control: no-cache');
+header('Connection: keep-alive');
+
+// désacitver la limite de temps d'execution du script
+set_time_limit(0);
+
+// boucle infinie pour envoyer les notifs en temps réel
+while (true) {
+    $games = $pdo->query('SELECT * FROM games WHERE player2 IS NOT NULL');
+
+    // passer la boucle si aucune partie n'est en cours
+    if ($games->rowCount() < 0) {
+        sleep(15);
+        continue;
+    }
+
+    foreach ($games as $game) {
+        $stmt = $pdo->prepare('SELECT * FROM notifications WHERE game_id = ?');
+        $relative_notifications = $stmt->execute([$game['id']]);
+        if (!$relative_notifications->rowCount() > 0) {
+            continue;
+        }
+        //envoyer les notifs aux clients
+        foreach ($relative_notifications as $notification) {
+            $data = array(
+                'timestamp' => time(),
+                'message' => $notification['notification_type'],
+                'data' => json_decode($notification['notification_data'], true),
+                'notified_by' => $notification['notified_by']
+            );
+            echo "data: " . json_encode($data) . "\n\n";
+        }
+
+        // supprimer les notif de la db pour ne pas la surcharger
+        $stmt = $pdo->prepare('DELETE FROM notifications WHERE game_id = ?');
+        $stmt->execute([$game['id']]);
+    }
+
+    while (ob_get_level() > 0) {
+        ob_end_flush();
+    }
+    flush();
+
+    // laisser respirer le CPU
+    sleep(4);
+}
+?>

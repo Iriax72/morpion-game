@@ -9,7 +9,7 @@ Méthodes disponibles:
 ! Faille de sécurité : n'inporte qui leur créer une partie au nom d'un autre user en indiquant son id.
 TODO: régler ça
 
-- POST /api.php?action=join_game&token=TOKEN
+- POST /api.php?action=join_game&user_id=USER_ID&token=TOKEN
     => Rejoindre la partie existante avec le TOKEN
 */
 
@@ -47,6 +47,7 @@ switch($action) {
         while (!$token || in_array($token, $existing_tokens)) {
             $token = bin2hex(random_bytes(6));
         }
+
         //insère le token dans la db
         try {
             $stmt = $pdo->prepare('INSERT INTO games (token, created_by) VALUES (?, ?)');
@@ -56,11 +57,62 @@ switch($action) {
             echo json_encode(['error' => 'Erreur serveur: ' . $e->getMessage()]);
             exit;
         }
+
         echo json_encode(['success' => true, 'token' => $token]);
         break;
 
     case 'join_game':
-        // TODO : implémenter ça
+        if (!isset($_REQUEST['user_id']) || !isset($_REQUEST['token'])) {
+            http_response_code(400);
+            echo json_encode(['error' => 'user_id ou token non fourni']);
+            exit;
+        }
+        $user2_id = $_REQUEST['user_id'];
+        $token = $_REQUEST['token'];
+
+        //récupère la pdo
+        $pdo = get_db_connection();
+
+        //cherche la partie correspondante au token
+        $stmt = $pdo->prepare('SELECT id FROM games WHERE token = ?');
+        $stmt->execute([$token]);
+        $game = $stmt->fetch();
+
+        if (!$game) {
+            http_response_code(404);
+            echo json_encode(['error' => 'Partie non trouvée']);
+            exit;
+        }
+
+        // ajoute le joueur 2 à la partie
+        try {
+            $stmt = $pdo->prepare('UPDATE games SET player2 = ? WHERE id = ? AND player2 IS NULL');
+            $stmt->execute([$user2_id, $game['id']]);
+            if ($stmt->rowCount() === 0) {
+                http_response_code(400);
+                echo json_encode(['error' => 'Impossible de rejoindre la partie, elle est déjà complète']);
+                exit;
+            }
+        } catch (PDOException $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Erreur serveur: ' . $e->getMessage()]);
+            exit;
+        }
+
+        echo json_encode(['success' => true]);
+
+        // commemcer la partie entre les deux joueurs
+        $user1_id = $game['created_by'];
+
+        foreach ([$user1_id, $user2_id] as $player_id) {
+            $stmt = $pdo->prepare('INSERT INTO notifications (game_id, notification_type, notification_data, notified_by) VALUES (?, ?, ?)');
+            $stmt->execute([
+                $game['id'],
+                'game_start',
+                json_encode(['game_id' => $gamr['id']]),
+                $user2_id
+            ]);
+        }
         break;
 }
 //attraper toutes les erreurs imprévues

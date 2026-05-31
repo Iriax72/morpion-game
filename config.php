@@ -60,5 +60,18 @@ function init_db(): void {
         FOREIGN KEY (created_by) REFERENCES users(id),
         FOREIGN KEY (player2) REFERENCES users(id)
     );');
+
+    // table notifications (id, game_id, notified_at, notification_type, notification_data, notified_by)
+    $pdo->exec('
+    CREATE TABLE IF NOT EXISTS notifications (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        game_id INT NOT NULL,
+        notified_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        notification_type VARCHAR(20) NOT NULL,
+        notification_data JSON NOT NULL,
+        notified_by INT NOT NULL,
+        FOREIGN KEY (game_id) REFERENCES games(id),
+        FOREIGN KEY (notified_by) REFERENCES users(id)
+    );');
 }
 ?>
