@@ -28,15 +28,16 @@ while (true) {
     $games = $pdo->query('SELECT * FROM games WHERE player2 IS NOT NULL');
 
     // passer la boucle si aucune partie n'est en cours
-    if ($games->rowCount() < 0) {
+    if ($games->rowCount() === 0) {
         sleep(15);
         continue;
     }
 
     foreach ($games as $game) {
         $stmt = $pdo->prepare('SELECT * FROM notifications WHERE game_id = ?');
-        $relative_notifications = $stmt->execute([$game['id']]);
-        if (!$relative_notifications->rowCount() > 0) {
+        $stmt->execute([$game['id']]);
+        $relative_notifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if (count($relative_notifications) === 0) {
             continue;
         }
         //envoyer les notifs aux clients

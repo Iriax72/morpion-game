@@ -23,8 +23,6 @@ try {
     die('<p style="color: red;">Erreur d\'insertion dans la db:' . $e->getMessage() . '</p>');
 }
 
-require_once __DIR__ . '/stream.php';
-
 header('Location: ./menu.php');
 exit;
 ?>

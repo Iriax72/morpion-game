@@ -21,8 +21,6 @@ if (session_status() === PHP_SESSION_NULL) {
     }
 }
 
-require_once __DIR__ . '/stream.php';
-
 if (!isset($_GET['game_id']) || !isset($_GET['user_id'])) {
     http_response_code(400);
     echo '<p style="color: red;">game_id ou user_id manquant</p>';
