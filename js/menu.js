@@ -16,9 +16,9 @@ function createPopup(content = []) {
     // le paramètre content doit etre un tableau d'éléments DOM ou strings ou la valeur 'CROSS_BTN'
     const div = document.createElement('div');
     div.classList.add('popup');
-    for (const element of content) {
+    content.forEach(element => {
         div.appendChild(element); // TODO: sécuriser en cas d'injection malveillante
-    }
+    });
 
     if ('CROSS_BTN' in content) {
         const crossBtn = document.createElement('btn');
@@ -28,13 +28,13 @@ function createPopup(content = []) {
             document.body.removeChild(div);
         });
         div.appendChild(crossBtn);
-}
+    }
     return div;
 }
 
 // Event listeners:
 createGameBtn.addEventListener('click', () => {
-    const popup = createPopup('En attente de votre code d\'accès...');
+    const popup = createPopup(['En attente de votre code d\'accès...']);
     document.body.appendChild(popup);
     
     // damande un token au serveur
