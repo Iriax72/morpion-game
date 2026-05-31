@@ -93,7 +93,7 @@ $player_num = $game['created_by'] === $_GET['user_id'] ? 1 : 2;
         if ($player_num === 1) {
             echo '<image src="./assets/cross.png" alt="Cross" id="cross-piece" draggable="true">';
         } else {
-            echo '<image src="./assets/cicle.png" alt="Circle" id="cicle-piece" draggable="true">';
+            echo '<image src="./assets/circle.png" alt="Circle" id="cicle-piece" draggable="true">';
         }
         ?>
     </div>
