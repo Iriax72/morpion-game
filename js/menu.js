@@ -54,7 +54,28 @@ function createPopup(content = []) {
 
 // Event listeners:
 createGameBtn.addEventListener('click', () => {
-    const popup = createPopup(['En attente de votre code d\'accès...']);
+    const annuler = document.createElement('button');
+    annuler.innerText = 'Annuler';
+    annuler.classList.add('popup-btn');
+    annuler.addEventListener('click', () => {
+        fetch(`/api.php?action=cancel_game&user_id=${userId}&token=${token}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                document.body.removeChild(popup);
+            } else if (data.error) {
+                console.error('Erreur lors de l\'annulation de la partie:', data.error);
+            } else {
+                console.error('Réponse inatendue de la part de l\'api:', data);
+            }
+        });
+    })
+    const popup = createPopup(['En attente de votre code d\'accès...', annuler]);
     document.body.appendChild(popup);
     
     // damande un token au serveur
@@ -67,7 +88,7 @@ createGameBtn.addEventListener('click', () => {
     .then(response => response.json())
     .then(data => {
         const token = data.token;
-        popup.innerText = `Code d'acces: ${token}`;
+        popup.innerHTML = `Code d'acces: ${token}` + annuler;
     });
 });
 

@@ -9,6 +9,10 @@ Méthodes disponibles:
 ! Faille de sécurité : n'inporte qui leur créer une partie au nom d'un autre user en indiquant son id.
 TODO: régler ça
 
+- POST /api.php?action=cancel_game&user_id=USER_ID&token=TOKEN
+    => Annule la partie en cours correspondante au token, seulement si USER_ID en est le créateur
+! Faille de sécurité : n'importe qui peut annuler n'importe quelle partie en se faisant passer pour son créateur
+
 - POST /api.php?action=join_game&user_id=USER_ID&token=TOKEN
     => Rejoindre la partie existante avec le TOKEN
 */
@@ -61,6 +65,45 @@ switch($action) {
         echo json_encode(['success' => true, 'token' => $token]);
         break;
 
+    case 'cancel_game':
+        if (!isset($_REQUEST['user_id']) || !isset($_REQUEST['token'])) {
+            http_response_code(400);
+            echo json_encode(['error' => 'user_id ou token manquant']);
+            exit;
+        }
+        $user_id = $_REQUEST['user_id'];
+        $token = $_REQUEST['token'];
+
+        //récupère la pdo
+        $pdo = get_db_connection();
+
+        $stmt = $pdo->prepare('SELECT id FROM games WHERE token = ?');
+        $stmt->execute([$token]);
+        $game = $stmt->fetch();
+
+        if (!$game) {
+            http_response_code(404);
+            echo json_encode(['error' => 'Partie non trouvée']);
+            exit;
+        }
+        if ($game['created_by'] !== $user_id) {
+            http_response_code(403);
+            echo json_encode(['error' => 'Vous n\'avez pas l\'autorisation d\'annuler cette partie']);
+            exit;
+        }
+
+        try {
+            $stmt = $pdo->prepare('DELETE FROM games WHERE id = ?');
+            $stmt->execute([$game['id']]);
+        } catch (PDOException $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Erreur serveur: ' . $e->getMessage()]);
+            exit;
+        }
+
+        echo json_encode(['success' => true]);
+        break;
+    
     case 'join_game':
         if (!isset($_REQUEST['user_id']) || !isset($_REQUEST['token'])) {
             http_response_code(400);
