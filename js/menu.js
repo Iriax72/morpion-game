@@ -75,7 +75,7 @@ createGameBtn.addEventListener('click', () => {
             }
         });
     })
-    const popup = createPopup(['En attente de votre code d\'accès...', annuler]);
+    const popup = createPopup(['En attente de votre code d\'accès...', annuler]); // TODO
     document.body.appendChild(popup);
     
     // damande un token au serveur
@@ -88,7 +88,8 @@ createGameBtn.addEventListener('click', () => {
     .then(response => response.json())
     .then(data => {
         const token = data.token;
-        popup.innerHTML = `Code d'acces: ${token}` + annuler;
+        document.body.removeChild(popup);
+        createPopup([`Code d'acces: ${token}`, annuler]);
     });
 });
 
