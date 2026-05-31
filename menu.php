@@ -15,7 +15,7 @@ if (session_status() === PHP_SESSION_NONE) {
     try {
         $stmt->execute([$_SESSION['user_id']]);
     } catch (PDOException $e) {
-        die('<p style="color: red;">Erreur d\'insertion dans la db: ' . $e->getMessage() . '</p>');
+        die('<p style="color: red;">Erreur lors de la création de l\'utilisateur: ' . $e->getMessage() . '</p>');
     }
 }
 ?>

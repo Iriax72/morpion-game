@@ -6,16 +6,28 @@ Page de la partie
 game-board est la div qui contient le plateau de jeu où le js va injecter les X et les O.
 Cette page envoie les requêtes à l'api pour faire des action de jeu, et écoute les notifications du stream pour mettre à jour le plateau
 */
+require_once __DIR__ . '/config.php';
+$pdo = get_db_connection();
+
+if (session_status() === PHP_SESSION_NULL) {
+    session_start();
+    $_SESSION['user_id'] = bin2hex(random_bytes(16));
+
+    try {
+        $stmt = $pdo->prepare('INSERT  INTO users (id) VALUES (?)');
+        $stmt->execute([$_SESSION['user_id']]);
+    } catch (PDOException $e) {
+        die('<p style="color: red;">Erreur lors de la création de l\'utilisateur: ' . $e->getMessage() . '</p>');
+    }
+}
+
+require_once __DIR__ . '/stream.php';
 
 if (!isset($_GET['game_id']) || !isset($_GET['user_id'])) {
     http_response_code(400);
     echo '<p style="color: red;">game_id ou user_id manquant</p>';
     exit;
 }
-
-// se connecter à la db
-require_once __DIR__ . '/config.php';
-$pdo = get_db_connection();
 
 // Récuperer la partie
 $stmt = $pdo->prepare('SELECT * FROM games WHERE id = ?');
