@@ -77,7 +77,7 @@ switch($action) {
         //récupère la pdo
         $pdo = get_db_connection();
 
-        $stmt = $pdo->prepare('SELECT id FROM games WHERE token = ?');
+        $stmt = $pdo->prepare('SELECT id, created_by FROM games WHERE token = ?');
         $stmt->execute([$token]);
         $game = $stmt->fetch();
 

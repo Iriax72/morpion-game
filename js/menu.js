@@ -85,8 +85,8 @@ createGameBtn.addEventListener('click', () => {
                 if (result.success) {
                     if (popup && popup.parentNode) popup.parentNode.removeChild(popup);
                 } else if (result.error) {
-                    createPopup(['CROSS_BTN', `Erreur: ${result.error}`]);
-                    console.error('Erreur lors de l\'annulation de la partie:', result.error);
+                    alert('Erreur lors de l\'annulation de la partie: ' + result.error);
+                    console.error('Erreur lors de l\'annulation de la partie', token, ':', result.error);
                 } else {
                     console.error('Réponse inatendue de l\'api:', result);
                 }
