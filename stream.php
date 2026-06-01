@@ -46,14 +46,15 @@ while (true) {
         
         //envoyer les notifs aux clients
         foreach ($relative_notifications as $notification) {
-            if (notification['notification_type'] === 'game_start') {
+            if ($notification['notification_type'] === 'game_start') {
                 echo "event: game_start\n";
-            } 
+            }
             $data = array(
                 'timestamp' => time(),
                 'message' => $notification['notification_type'],
                 'data' => json_decode($notification['notification_data'], true),
-                'notified_by' => $notification['notified_by']
+                'notified_by' => $notification['notified_by'],
+                'notified_to' => isset($notification['notified_to']) ? json_decode($notification['notified_to'], true) : null,
             );
             echo "data: " . json_encode($data) . "\n\n";
         }

@@ -164,11 +164,12 @@ eventSource.addEventListener('game_start', (event) => {
         console.warn('game_started event received without data');
         return;
     }
-    const data = JSON.parse(event.data);
-    // Ne pas analyser les ntofis qui ne sont pas destinées à cet user
-    if (data.notified_to && !data.notified_to.includes(userId)) {
+    const payload = JSON.parse(event.data);
+    const eventData = payload.data || {};
+    // Ne pas analyser les notifs qui ne sont pas destinées à cet user
+    if (payload.notified_to && !payload.notified_to.includes(userId)) {
         return;
     }
     // Rediriger vers la page de la partie
-    window.location.href = '/game.php?game_id=' + data.game_id;
+    window.location.href = '/game.php?game_id=' + eventData.game_id;
 });
