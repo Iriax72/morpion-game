@@ -42,7 +42,7 @@ function createPopup(content = []) {
     if (addCrossBtn) {
         const crossBtn = document.createElement('button');
         crossBtn.innerText = 'x';
-        crossBtn.classList.add('cross-Btn');
+        crossBtn.classList.add('cross-btn');
         crossBtn.addEventListener('click', () => {
             document.body.removeChild(div);
         });
@@ -54,31 +54,11 @@ function createPopup(content = []) {
 
 // Event listeners:
 createGameBtn.addEventListener('click', () => {
-    const annuler = document.createElement('button');
-    annuler.innerText = 'Annuler';
-    annuler.classList.add('popup-btn');
-    annuler.addEventListener('click', () => {
-        fetch(`/api.php?action=cancel_game&user_id=${userId}&token=${token}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                document.body.removeChild(popup);
-            } else if (data.error) {
-                console.error('Erreur lors de l\'annulation de la partie:', data.error);
-            } else {
-                console.error('Réponse inatendue de la part de l\'api:', data);
-            }
-        });
-    })
-    const popup = createPopup(['En attente de votre code d\'accès...', annuler]); // TODO: ce annuler ne va rien annuler puisque la partie n'a pas encore été crée ! Si le boutton et cliqué, l'api ne trouve rien a delete mais la création de la partie n'est pas annulée 
+    // afficher message d'attente
+    let popup = createPopup(['En attente de votre code d\'accès...']);
     document.body.appendChild(popup);
-    
-    // damande un token au serveur
+
+    // demander un token au serveur
     fetch(`/api.php?action=create_game_token&user_id=${userId}`, {
         method: 'POST',
         headers: {
@@ -88,8 +68,40 @@ createGameBtn.addEventListener('click', () => {
     .then(response => response.json())
     .then(data => {
         const token = data.token;
-        document.body.removeChild(popup);
-        createPopup([`Code d'acces: ${token}`, annuler]);
+
+        // construire le bouton annuler qui utilisera le token reçu
+        const annuler = document.createElement('button');
+        annuler.innerText = 'Annuler';
+        annuler.classList.add('popup-btn');
+        annuler.addEventListener('click', () => {
+            fetch(`/api.php?action=cancel_game&user_id=${userId}&token=${token}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.success) {
+                    if (popup && popup.parentNode) popup.parentNode.removeChild(popup);
+                } else if (result.error) {
+                    console.error('Erreur lors de l\'annulation de la partie:', result.error);
+                } else {
+                    console.error('Réponse inatendue de l\'api:', result);
+                }
+            });
+        });
+
+        // remplacer le popup d'attente par le popup contenant le token et le bouton annuler
+        if (popup && popup.parentNode) popup.parentNode.removeChild(popup);
+        popup = createPopup([`Code d'acces: ${token}`, annuler]);
+        document.body.appendChild(popup);
+    })
+    .catch(err => {
+        console.error('Erreur lors de la création du token:', err);
+        if (popup && popup.parentNode) popup.parentNode.removeChild(popup);
+        const errPopup = createPopup(['Erreur lors de la création de la partie.']);
+        document.body.appendChild(errPopup);
     });
 });
 
@@ -97,7 +109,7 @@ joinGameBtn.addEventListener('click', () => {
     // demander le token au user
     const label = document.createElement('label');
     label.setAttribute('for', 'game-token');
-    label.innerText = 'Coded\'accès:';
+    label.innerText = 'Code d\'accès:';
     label.classList.add('popup-label')
 
     const input = document.createElement('input');
@@ -108,6 +120,7 @@ joinGameBtn.addEventListener('click', () => {
 
     const btn = document.createElement('button');
     btn.innerText = 'Rejoindre';
+    btn.classList.add('popup-btn');
     btn.addEventListener('click', () => {
         const token = input.value;
 
