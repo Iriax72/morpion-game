@@ -34,14 +34,21 @@ while (true) {
     }
 
     foreach ($games as $game) {
+        // Récupérer les notifications relatives à la partie
         $stmt = $pdo->prepare('SELECT * FROM notifications WHERE game_id = ?');
         $stmt->execute([$game['id']]);
         $relative_notifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // passer la boucle s'il n'y a pas de notif pour cette partie
         if (count($relative_notifications) === 0) {
             continue;
         }
+        
         //envoyer les notifs aux clients
         foreach ($relative_notifications as $notification) {
+            if (notification['notification_type'] === 'game_start') {
+                echo "event: game_start\n";
+            } 
             $data = array(
                 'timestamp' => time(),
                 'message' => $notification['notification_type'],

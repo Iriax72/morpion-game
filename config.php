@@ -70,6 +70,7 @@ function init_db(): void {
         notification_type VARCHAR(20) NOT NULL,
         notification_data JSON NOT NULL,
         notified_by VARCHAR(32) NOT NULL,
+        notified_to JSON NOT NULL,
         FOREIGN KEY (game_id) REFERENCES games(id),
         FOREIGN KEY (notified_by) REFERENCES users(id)
     );');

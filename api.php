@@ -117,7 +117,7 @@ switch($action) {
         $pdo = get_db_connection();
 
         //cherche la partie correspondante au token
-        $stmt = $pdo->prepare('SELECT id FROM games WHERE token = ?');
+        $stmt = $pdo->prepare('SELECT id, created_by FROM games WHERE token = ?');
         $stmt->execute([$token]);
         $game = $stmt->fetch();
 
@@ -146,16 +146,16 @@ switch($action) {
 
         // commemcer la partie entre les deux joueurs
         $user1_id = $game['created_by'];
+        // $user2_id est déjà défini plus haut
 
-        foreach ([$user1_id, $user2_id] as $player_id) {
-            $stmt = $pdo->prepare('INSERT INTO notifications (game_id, notification_type, notification_data, notified_by) VALUES (?, ?, ?)');
-            $stmt->execute([
-                $game['id'],
-                'game_start',
-                json_encode(['game_id' => $gamr['id']]),
-                $user2_id
-            ]);
-        }
+        $stmt = $pdo->prepare('INSERT INTO notifications (game_id, notification_type, notification_data, notified_by, notified_to) VALUES (?, ?, ?)');
+        $stmt->execute([
+            $game['id'],
+            'game_start',
+            json_encode(['game_id' => $game['id']]),
+            $user2_id,
+            json_encode([$user1_id, $user2_id])
+        ]);
         break;
 }
 //attraper toutes les erreurs imprévues

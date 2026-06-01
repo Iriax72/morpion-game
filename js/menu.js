@@ -111,7 +111,7 @@ joinGameBtn.addEventListener('click', () => {
     const label = document.createElement('label');
     label.setAttribute('for', 'game-token');
     label.innerText = 'Code d\'accès:';
-    label.classList.add('popup-label')
+    label.classList.add('popup-label');
 
     const input = document.createElement('input');
     input.setAttribute('type', 'text');
@@ -126,22 +126,28 @@ joinGameBtn.addEventListener('click', () => {
         const token = input.value;
 
         // envoyer une requête pour rejoindre la partie
-        fetch(`/api.php?action=join_game&user_id=${userId}&token=${token}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type' : 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                createPopup(['La partie va bientôt commencer...']);
-            } else if (data.error){
-                createPopup(['CROSS_BTN', data.error]);
-            } else {
-                console.error('Unexpected response from server:', data);
-            }
-        });
+        try{
+            fetch(`/api.php?action=join_game&user_id=${userId}&token=${token}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type' : 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    createPopup(['La partie va bientôt commencer...']);
+                } else if (data.error){
+                    createPopup(['CROSS_BTN', data.error]);
+                } else {
+                    createPopup(['CROSS_BTN', 'Réponse inattendue du serveur:', data]);
+                    console.error('Unexpected response from server:', data);
+                }
+            });
+        } catch (err) {
+            createPopup(['CROSS_BTN', 'Erreur lors de la requete pour rejoindre la partie:', err])
+            console.error('Erreur lors de la requete pour rejoindre la partie:', err);
+        }
     });
     btn.classList.add('popup-btn');
 
@@ -153,5 +159,16 @@ joinGameBtn.addEventListener('click', () => {
 const eventSource = new EventSource('/stream.php');
 
 eventSource.addEventListener('game_start', (event) => {
-    window.location.href = '/game.php?game_id=' + JSON.parse(event.data).game_id;
-})
+    // Ne pas analyser les notifs sans data
+    if (!event.data) {
+        console.warn('game_started event received without data');
+        return;
+    }
+    const data = JSON.parse(event.data);
+    // Ne pas analyser les ntofis qui ne sont pas destinées à cet user
+    if (data.notified_to && !data.notified_to.includes(userId)) {
+        return;
+    }
+    // Rediriger vers la page de la partie
+    window.location.href = '/game.php?game_id=' + data.game_id;
+});
