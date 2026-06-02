@@ -136,16 +136,21 @@ joinGameBtn.addEventListener('click', () => {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    createPopup(['La partie va bientôt commencer...']);
+                    const successPopup = createPopup(['La partie va bientôt commencer...']);
+                    document.body.appendChild(successPopup);
                 } else if (data.error){
-                    createPopup(['CROSS_BTN', data.error]);
+                    const errorMsg = (typeof data.error === 'string') ? data.error : JSON.stringify(data.error);
+                    const errorPopup = createPopup(['CROSS_BTN', errorMsg]);
+                    document.body.appendChild(errorPopup);
                 } else {
-                    createPopup(['CROSS_BTN', 'Réponse inattendue du serveur:', data]);
+                    const unexpected = createPopup(['CROSS_BTN', 'Réponse inattendue du serveur:', JSON.stringify(data)]);
+                    document.body.appendChild(unexpected);
                     console.error('Unexpected response from server:', data);
                 }
             });
         } catch (err) {
-            createPopup(['CROSS_BTN', 'Erreur lors de la requete pour rejoindre la partie:', err])
+            const errPopup = createPopup(['CROSS_BTN', 'Erreur lors de la requete pour rejoindre la partie:', String(err)]);
+            document.body.appendChild(errPopup);
             console.error('Erreur lors de la requete pour rejoindre la partie:', err);
         }
     });
