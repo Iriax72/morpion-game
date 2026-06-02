@@ -148,7 +148,7 @@ switch($action) {
         $user1_id = $game['created_by'];
         // $user2_id est déjà défini plus haut
 
-        $stmt = $pdo->prepare('INSERT INTO notifications (game_id, notification_type, notification_data, notified_by, notified_to) VALUES (?, ?, ?)');
+        $stmt = $pdo->prepare('INSERT INTO notifications (game_id, notification_type, notification_data, notified_by, notified_to) VALUES (?, ?, ?, ?, ?)');
         $stmt->execute([
             $game['id'],
             'game_start',
