@@ -91,6 +91,15 @@ switch($action) {
             echo json_encode(['error' => 'Vous n\'avez pas l\'autorisation d\'annuler cette partie']);
             exit;
         }
+        // empecher de supprimer si il y a des notifs relatives à la partie (previent les SQLState[23000])
+        $stmt = $pdo->prepare('SELECT COUNT(*) FROM notifications WHERE game_id = ?');
+        $stmt->execute([$game['id']]);
+        $notif_count = $stmt->fetchColumn();
+        if ($notif_count > 0) {
+            http_response_code(400);
+            echo json_encode(['error' => 'Imossible de supprimer la partie, il y a des notifications associées']);
+            exit;
+        }
 
         try {
             $stmt = $pdo->prepare('DELETE FROM games WHERE id = ?');
