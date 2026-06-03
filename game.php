@@ -35,7 +35,7 @@ $stmt->execute([$game_id]);
 $game = $stmt->fetch();
 
 // vérifier que la partie existe et que le client en fait partie
-if (!game) {
+if (!$game) {
     http_response_code(404);
     echo '<p style="color: red;">Partie non trouvée</p>';
     exit;
