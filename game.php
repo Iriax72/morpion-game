@@ -9,7 +9,7 @@ Cette page envoie les requêtes à l'api pour faire des action de jeu, et écout
 require_once __DIR__ . '/config.php';
 $pdo = get_db_connection();
 
-if (session_status() === PHP_SESSION_NULL) {
+if (session_status() === PHP_SESSION_NONE) {
     session_start();
     $_SESSION['user_id'] = bin2hex(random_bytes(16));
 
