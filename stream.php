@@ -75,9 +75,9 @@ while (true) {
         }
         $data = array(
             'timestamp' => time(),
-            'message' => $notification['notification_data'],
+            'data' => json_decode($notification['notification_data'], true),
             'notified_by' => $notification['notified_by'],
-            'notified_to' => $notification['notified_to']
+            'notified_to' => json_decode($notification['notified_to'], true)
         );
         echo "data: " . json_encode($data) . "\n\n";
     }
