@@ -96,7 +96,7 @@ switch($action) {
         $stmt->execute([$game['id']]);
         $notif_count = $stmt->fetchColumn();
         if ($notif_count > 0) {
-            http_response_code(400);
+            http_response_code(409);
             echo json_encode(['error' => 'Imossible de supprimer la partie, il y a des notifications associées']);
             exit;
         }
@@ -141,7 +141,7 @@ switch($action) {
             $stmt = $pdo->prepare('UPDATE games SET player2 = ? WHERE id = ? AND player2 IS NULL');
             $stmt->execute([$user2_id, $game['id']]);
             if ($stmt->rowCount() === 0) {
-                http_response_code(400);
+                http_response_code(409);
                 echo json_encode(['error' => 'Impossible de rejoindre la partie, elle est déjà complète']);
                 exit;
             }
