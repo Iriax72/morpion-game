@@ -160,19 +160,21 @@ joinGameBtn.addEventListener('click', () => {
     document.body.appendChild(popup);
 });
 
-// Vérifier qu'on est pas appelé pour une partie
+// Vérifier qu'on n'est pas appelé pour une partie
 const eventSource = new EventSource('/stream.php');
 
 eventSource.addEventListener('game_start', (event) => {
     // Ne pas analyser les notifs sans data
     if (!event.data) {
         console.warn('game_started event received without data');
+        alert('Une notif sans données a été recue')
         return;
     }
     const payload = JSON.parse(event.data);
     const eventData = payload.data || {};
     // Ne pas analyser les notifs qui ne sont pas destinées à cet user
     if (payload.notified_to && !payload.notified_to.includes(userId)) {
+        alert('Une notif qui ne vous est pas destinée a eté recue');
         return;
     }
     // Rediriger vers la page de la partie

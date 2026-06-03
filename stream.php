@@ -25,6 +25,8 @@ set_time_limit(0);
 
 // boucle infinie pour envoyer les notifs en temps réel
 while (true) {
+    // Tout le commentaire qui suit est un ancien essait de code. Il ne sera plus mais est conservé en cas de nelcrsité de revenir en arriere.
+    /*
     $games = $pdo->query('SELECT * FROM games WHERE player2 IS NOT NULL');
 
     // passer la boucle si aucune partie n'est en cours
@@ -32,7 +34,6 @@ while (true) {
         sleep(15);
         continue;
     }
-
     foreach ($games as $game) {
         // Récupérer les notifications relatives à la partie
         $stmt = $pdo->prepare('SELECT * FROM notifications WHERE game_id = ?');
@@ -63,6 +64,25 @@ while (true) {
         $stmt = $pdo->prepare('DELETE FROM notifications WHERE game_id = ?');
         $stmt->execute([$game['id']]);
     }
+    */
+
+    //Récuperer toutes le notifs
+    $stmt = $pdo->query('SELECT * FROM notifications');
+    $notifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    foreach ($notifications as $notification) {
+        if ($notification['notification_type'] === 'game_start') {
+            echo "event: game_start\n";
+        }
+        $data = array(
+            'timestamp' => time(),
+            'message' => $notification['notification_data'],
+            'notified_by' => $notification['notified_by'],
+            'notified_to' => $notification['notified_to']
+        );
+        echo "data: " . json_encode($data) . "\n\n";
+    }
+    // supprimer les notifs de la db pour ne pas la surcharger
+    $pdo->query('DELETE FROM notifications');
 
     while (ob_get_level() > 0) {
         ob_end_flush();

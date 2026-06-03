@@ -26,10 +26,12 @@ if (!isset($_GET['game_id']) || !isset($_GET['user_id'])) {
     echo '<p style="color: red;">game_id ou user_id manquant</p>';
     exit;
 }
+$game_id = $_GET['game_id'];
+$user_id = $_GET['user_id'];
 
 // Récuperer la partie
 $stmt = $pdo->prepare('SELECT * FROM games WHERE id = ?');
-$stmt->execute([$_GET['game_id']]);
+$stmt->execute([$game_id]);
 $game = $stmt->fetch();
 
 // vérifier que la partie existe et que le client en fait partie
@@ -45,7 +47,7 @@ if ($game['player2'] !== $_GET['user_id'] && $game['created_by'] !== $_GET['user
 }
 
 // Numéro du joueur (1 ou 2)
-$player_num = $game['created_by'] === $_GET['user_id'] ? 1 : 2;
+$player_num = $game['created_by'] === $user_id ? 1 : 2;
 ?>
 
 <!DOCTYPE html>
@@ -57,8 +59,8 @@ $player_num = $game['created_by'] === $_GET['user_id'] ? 1 : 2;
     <link rel="stylesheet" href="./css/game.css">
     <script>
         // fournir le game_id au client
-        const gameId = <?= $_GET['game_id']; ?>;
-        const userId = '<?= $_GET['user_id']; ?>'; // TODO: sécuriser cela: n'importe qui peut se faire passer pour n'importe qui !
+        const gameId = <?= $game_id; ?>;
+        const userId = '<?= $user_id; ?>'; // TODO: sécuriser cela: n'importe qui peut se faire passer pour n'importe qui !
     </script>
     <script src="./js/game.js" defer></script>
 </head>

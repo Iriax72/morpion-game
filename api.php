@@ -144,7 +144,7 @@ switch($action) {
 
         echo json_encode(['success' => true]);
 
-        // commemcer la partie entre les deux joueurs
+        // commencer la partie entre les deux joueurs
         $user1_id = $game['created_by'];
         // $user2_id est déjà défini plus haut
 
