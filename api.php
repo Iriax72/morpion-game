@@ -148,14 +148,21 @@ switch($action) {
         $user1_id = $game['created_by'];
         // $user2_id est déjà défini plus haut
 
-        $stmt = $pdo->prepare('INSERT INTO notifications (game_id, notification_type, notification_data, notified_by, notified_to) VALUES (?, ?, ?, ?, ?)');
-        $stmt->execute([
-            $game['id'],
-            'game_start',
-            json_encode(['game_id' => $game['id']]),
-            $user2_id,
-            json_encode([$user1_id, $user2_id])
-        ]);
+        try{
+            $stmt = $pdo->prepare('INSERT INTO notifications (game_id, notification_type, notification_data, notified_by, notified_to) VALUES (?, ?, ?, ?, ?)');
+            $stmt->execute([
+                $game['id'],
+                'game_start',
+                json_encode(['game_id' => $game['id']]),
+                $user2_id,
+                json_encode([$user1_id, $user2_id])
+            ]);
+        } catch (PDOException $e) {
+            http_response_code(500);
+            console_log('Erreur lors de la création de la notification game_start: ' . $e->getMessage());
+            echo json_encode(['error' => 'Erreur serveur: ' . $e->getMessage()]);
+            exit;
+        }
         break;
 }
 //attraper toutes les erreurs imprévues
