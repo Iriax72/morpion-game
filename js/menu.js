@@ -167,16 +167,26 @@ eventSource.addEventListener('game_start', (event) => {
     // Ne pas analyser les notifs sans data
     if (!event.data) {
         console.warn('game_started event received without data');
-        alert('Une notif sans données a été recue')
+        alert('Une notif sans données a été recue');
         return;
     }
-    const payload = event.data;
+
+    let payload;
+    try {
+        payload = JSON.parse(event.data);
+    } catch (err) {
+        console.error('Impossible de parser les données SSE :', err, event.data);
+        return;
+    }
+
     const eventData = payload.data || {};
+
     // Ne pas analyser les notifs qui ne sont pas destinées à cet user
     if (payload.notified_to && !payload.notified_to.includes(userId)) {
-        alert('Une notif qui ne vous est pas destinée a eté recue');
+        console.warn('Une notif qui ne vous est pas destinée a été recue', payload.notified_to);
         return;
     }
+
     // Rediriger vers la page de la partie
-    window.location.href = `/game.php?game_id=${eventData.game_id}&user_id=${userId}`;
+    window.location.href = `/game.php?game_id=${encodeURIComponent(eventData.game_id)}&user_id=${encodeURIComponent(userId)}`;
 });
