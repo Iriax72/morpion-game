@@ -23,6 +23,7 @@ header('Connection: keep-alive');
 // désacitver la limite de temps d'execution du script
 set_time_limit(0);
 
+console_log('Sream SSE démarré !');
 // boucle infinie pour envoyer les notifs en temps réel
 while (true) {
     // Tout le commentaire qui suit est un ancien essait de code. Il ne sera plus mais est conservé en cas de nelcrsité de revenir en arriere.
@@ -80,6 +81,7 @@ while (true) {
             'notified_to' => json_decode($notification['notified_to'], true)
         );
         echo "data: " . json_encode($data) . "\n\n";
+        console_log('Notif envoyée: ' . json_encode($data));
     }
     // supprimer les notifs de la db pour ne pas la surcharger
     $pdo->query('DELETE FROM notifications');
