@@ -170,7 +170,7 @@ eventSource.addEventListener('game_start', (event) => {
         alert('Une notif sans données a été recue')
         return;
     }
-    const payload = JSON.parse(event.data);
+    const payload = event.data;
     const eventData = payload.data || {};
     // Ne pas analyser les notifs qui ne sont pas destinées à cet user
     if (payload.notified_to && !payload.notified_to.includes(userId)) {
@@ -178,5 +178,5 @@ eventSource.addEventListener('game_start', (event) => {
         return;
     }
     // Rediriger vers la page de la partie
-    window.location.href = '/game.php?game_id=' + eventData.game_id;
+    window.location.href = `/game.php?game_id=${eventData.game_id}&user_id=${userId}`;
 });
