@@ -43,7 +43,17 @@ main {
 #game-board {
     width: 75vw;
     height: 75vw;
-    border: 2px solid #333333;
+    border: 2px solid #992222;
+    padding: 5px;
+    background-color: #222299;
+}
+
+table {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    width: 100%;
+    height: auto;
 }
 
 table tr td {
