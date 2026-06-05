@@ -164,6 +164,20 @@ joinGameBtn.addEventListener('click', () => {
 const eventSource = new EventSource('/stream.php');
 const id_notifs_received = [];
 
+alert('EventSource créée pour /stream.php');
+
+eventSource.addEventListener('open', (event) => {
+    alert('EventSource connectée et prête à recevoir des notifications');
+});
+
+eventSource.addEventListener('error', (event) => {
+    console.error('Erreur EventSource:', event);
+    console.error('État readyState:', eventSource.readyState);
+    if (eventSource.readyState === EventSource.CLOSED) {
+        console.error('La connexion SSE est fermée');
+    }
+});
+
 eventSource.addEventListener('game_start', (event) => {
     alert('notif recue: game_start');
     // Ne pas traiter les notifs sans data
@@ -190,7 +204,6 @@ eventSource.addEventListener('game_start', (event) => {
     }
 
     const eventData = payload.data || {};
-    alert(eventData);
 
     // Ne pas analyser les notifs qui ne sont pas destinées à cet user
     if (payload.notified_to && !payload.notified_to.includes(userId)) {

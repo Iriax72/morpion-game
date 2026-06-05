@@ -174,7 +174,6 @@ switch($action) {
             ]);
         } catch (PDOException $e) {
             http_response_code(500);
-            console_log('Erreur lors de la création de la notification game_start: ' . $e->getMessage());
             echo json_encode(['error' => 'Erreur serveur: ' . $e->getMessage()]);
             exit;
         }
