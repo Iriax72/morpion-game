@@ -54,7 +54,7 @@ table tr td {
     background-color: #e5e5e5;
 }
 
-#piece {
+#pieces {
     width: 75vw;
     height: 75px;
     display: flex;
@@ -64,7 +64,7 @@ table tr td {
     background-color: #e5e5e5;
 }
 
-#piece img {
+#pieces img {
     width: auto;
     height: 80%;
 }
