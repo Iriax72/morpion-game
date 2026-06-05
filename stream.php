@@ -71,6 +71,15 @@ while (true) {
     $stmt = $pdo->query('SELECT * FROM notifications');
     $notifications = $stmt->fetchAll(PDO::FETCH_ASSOC);
     foreach ($notifications as $notification) {
+        // Supprimer les notifs déjà lues par tous ses destinataires
+        $read_by = json_decode($notification['read_by'], true);
+        $notified_to = json_decode($notification['notified_to'], true);
+        if (count(array_diff($notified_to, $read_by)) === 0) {
+            $stmt = $pdo->prepare('DELETE FROM notifications WHERE id = ?');
+            $stmt->execute([$notification['id']]);
+            continue;
+        }
+        // Envoyer la notif aux clients
         if ($notification['notification_type'] === 'game_start') {
             echo "event: game_start\n";
         }
@@ -83,8 +92,6 @@ while (true) {
         echo "data: " . json_encode($data) . "\n\n";
         console_log('Notif envoyée: ' . json_encode($data));
     }
-    // supprimer les notifs de la db pour ne pas la surcharger
-    $pdo->query('DELETE FROM notifications');
 
     while (ob_get_level() > 0) {
         ob_end_flush();

@@ -162,14 +162,20 @@ joinGameBtn.addEventListener('click', () => {
 
 // Vérifier qu'on n'est pas appelé pour une partie
 const eventSource = new EventSource('/stream.php');
+const id_notifs_received = [];
 
 eventSource.addEventListener('game_start', (event) => {
-    // Ne pas analyser les notifs sans data
+    // Ne pas traiter les notifs sans data
     if (!event.data) {
         console.warn('game_started event received without data');
         alert('Une notif sans données a été recue');
         return;
     }
+    // Ne pas traiter les notifs déjà traitées
+    if (id_notifs_received.includes(event.id)) {
+        return;
+    }
+    id_notifs_received.push(event.id);
 
     let payload;
     try {
@@ -186,6 +192,21 @@ eventSource.addEventListener('game_start', (event) => {
         console.warn('Une notif qui ne vous est pas destinée a été recue', payload.notified_to);
         return;
     }
+
+    // indiquer au serveur que la notif à été reçue et lue
+    fetch(`/api.php?action=read_notification&user_id=${userId}&notification_id=${payload.id}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (!data.success) {
+            const error = data.error || 'Unknown error';
+            console.error('Erreur lors de la lecture de la notification:', error);
+        }
+    });
 
     // Rediriger vers la page de la partie
     window.location.href = `/game.php?game_id=${encodeURIComponent(eventData.game_id)}&user_id=${encodeURIComponent(userId)}`;

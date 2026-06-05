@@ -11,10 +11,15 @@ TODO: régler ça
 
 - POST /api.php?action=cancel_game&user_id=USER_ID&token=TOKEN
     => Annule la partie en cours correspondante au token, seulement si USER_ID en est le créateur
-! Faille de sécurité : n'importe qui peut annuler n'importe quelle partie en se faisant passer pour son créateur
+! Faille de sécurité : n'importe qui peut annuler n'importe quelle partie en se faisant passer pour son créateur (TODO)
 
 - POST /api.php?action=join_game&user_id=USER_ID&token=TOKEN
     => Rejoindre la partie existante avec le TOKEN
+! Faille de sécurité : n'importe qui peut rejoindre n'inoorte quelle partie en se faisant passer pour un autre user (TODO)
+
+- POST /api.php?action=read_notification&user_id=USER_ID&notification_id=NOTIFICATION_ID
+    => Marque la notif comme lue dans la db
+! Faille de sécurité : n'importe qui peut marquer une notif comme lue en se faisant passer pour un autre user qui ne ressevra alors jamais sa notif (TODO)
 */
 
 //enlever les warning qui pourrait corrompre le json
@@ -158,13 +163,14 @@ switch($action) {
         // $user2_id est déjà défini plus haut
 
         try{
-            $stmt = $pdo->prepare('INSERT INTO notifications (game_id, notification_type, notification_data, notified_by, notified_to) VALUES (?, ?, ?, ?, ?)');
+            $stmt = $pdo->prepare('INSERT INTO notifications (game_id, notification_type, notification_data, notified_by, notified_to, read_by) VALUES (?, ?, ?, ?, ?, ?)');
             $stmt->execute([
                 $game['id'],
                 'game_start',
                 json_encode(['game_id' => $game['id']]),
                 $user2_id,
-                json_encode([$user1_id, $user2_id])
+                json_encode([$user1_id, $user2_id]),
+                json_encode([]) // personne n'a encore lu au début
             ]);
         } catch (PDOException $e) {
             http_response_code(500);
@@ -172,6 +178,50 @@ switch($action) {
             echo json_encode(['error' => 'Erreur serveur: ' . $e->getMessage()]);
             exit;
         }
+        break;
+    
+    case 'read_notification':
+        if (!isset($_REQUEST['user_id']) || !isset($_REQUEST['notification_id'])) {
+            http_response_code(400);
+            echo json_encode(['error' => 'user_id ou notification_id non fourni']);
+            exit;
+        }
+        $user_id = $_REQUEST['user_id'];
+        $notification_id = $_REQUEST['notification_id'];
+
+        $stmt = $pdo->prepare('SELECT * FROM notifications WHERE id = ?');
+        $stmt->execute([$notification_id]);
+        $notif  = $stmt->fetch();
+
+        if (!$notif) {
+            http_response_code(404);
+            echo json_encode(['error' => 'Notification non trouvée']);
+            exit;
+        }
+        // Vérifier que l'user à la droit de lire la notif et ne l'a pas déjà lue
+        if (!in_array($user_id, json_decode($notif['notified_to'], true))) {
+            http_response_code(403);
+            echo json_encode(['error' => 'Vous n\'avez pas l\'autorisation de lire cette notification']);
+            exit;
+        }
+        if (in_array($user_id, json_decode($notification['read_by'], true))) {
+            http_response_code(409);
+            echo json_encode(['error' => 'Notification déjà lue']);
+            exit;
+        }
+
+        // récupère la pdo
+        $pdo = get_db_connection();
+
+        try {
+            $stmt = $pdo->prepare('UPDATE notifications SET read_by = read_by + ? WHERE id = ?');
+            $stmt->execute([json_encode([$user_id]), $notification_id]);
+        } catch (PDOException $e) {
+            http_response_code(500);
+            echo json_encode(['error' => 'Erreur serveur: ' . $e->getMessage()]);
+            exit;
+        }
+        echo json_encode(['success' => true]);
         break;
 }
 //attraper toutes les erreurs imprévues
