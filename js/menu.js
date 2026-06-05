@@ -171,11 +171,14 @@ eventSource.addEventListener('game_start', (event) => {
         alert('Une notif sans données a été recue');
         return;
     }
+    const eventId = event.lastEventId || event.id;
     // Ne pas traiter les notifs déjà traitées
-    if (id_notifs_received.includes(event.id)) {
+    if (eventId && id_notifs_received.includes(eventId)) {
         return;
     }
-    id_notifs_received.push(event.id);
+    if (eventId) {
+        id_notifs_received.push(eventId);
+    }
 
     let payload;
     try {
@@ -194,19 +197,22 @@ eventSource.addEventListener('game_start', (event) => {
     }
 
     // indiquer au serveur que la notif à été reçue et lue
-    fetch(`/api.php?action=read_notification&user_id=${userId}&notification_id=${payload.id}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (!data.success) {
-            const error = data.error || 'Unknown error';
-            console.error('Erreur lors de la lecture de la notification:', error);
-        }
-    });
+    const notificationId = payload.id || event.lastEventId || eventId;
+    if (notificationId) {
+        fetch(`/api.php?action=read_notification&user_id=${userId}&notification_id=${notificationId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (!data.success) {
+                const error = data.error || 'Unknown error';
+                console.error('Erreur lors de la lecture de la notification:', error);
+            }
+        });
+    }
 
     // Rediriger vers la page de la partie
     window.location.href = `/game.php?game_id=${encodeURIComponent(eventData.game_id)}&user_id=${encodeURIComponent(userId)}`;

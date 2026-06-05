@@ -80,6 +80,7 @@ while (true) {
             continue;
         }
         // Envoyer la notif aux clients
+        echo "id: " . $notification['id'] . "\n";
         if ($notification['notification_type'] === 'game_start') {
             echo "event: game_start\n";
         }

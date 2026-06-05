@@ -199,23 +199,27 @@ switch($action) {
             exit;
         }
         // Vérifier que l'user à la droit de lire la notif et ne l'a pas déjà lue
-        if (!in_array($user_id, json_decode($notif['notified_to'], true))) {
+        if (!in_array($user_id, json_decode($notif['notified_to'], true), true)) {
             http_response_code(403);
             echo json_encode(['error' => 'Vous n\'avez pas l\'autorisation de lire cette notification']);
             exit;
         }
-        if (in_array($user_id, json_decode($notification['read_by'], true))) {
+
+        $read_by = json_decode($notif['read_by'], true);
+        if (!is_array($read_by)) {
+            $read_by = [];
+        }
+        if (in_array($user_id, $read_by, true)) {
             http_response_code(409);
             echo json_encode(['error' => 'Notification déjà lue']);
             exit;
         }
 
-        // récupère la pdo
-        $pdo = get_db_connection();
+        $read_by[] = $user_id;
 
         try {
-            $stmt = $pdo->prepare('UPDATE notifications SET read_by = read_by + ? WHERE id = ?');
-            $stmt->execute([json_encode([$user_id]), $notification_id]);
+            $stmt = $pdo->prepare('UPDATE notifications SET read_by = ? WHERE id = ?');
+            $stmt->execute([json_encode(array_values($read_by)), $notification_id]);
         } catch (PDOException $e) {
             http_response_code(500);
             echo json_encode(['error' => 'Erreur serveur: ' . $e->getMessage()]);
