@@ -66,31 +66,35 @@ $piece = $player_num === 1 ? 'cross' : 'circle';
     <script src="./js/game.js" defer></script>
 </head>
 <body>
-    <h1>Partie de Morpiong</h1>
-    <div id="score">
-        <span id="player1-score">0</span> - <span id="player2-score">0</span>
-    </div>
-    <div id="game-board">
-        <table>
-            <tr>
-                <td data-cell="0"></td>
-                <td data-cell="1"></td>
-                <td data-cell="2"></td>
-            </tr>
-            <tr>
-                <td data-cell="3"></td>
-                <td data-cell="4"></td>
-                <td data-cell="5"></td>
-            </tr>
-            <tr>
-                <td data-cell="6"></td>
-                <td data-cell="7"></td>
-                <td data-cell="8"></td>
-            </tr>
-        </table>
-    </div>
-    <div id="pieces">
-        <image src="./assets/<?= $piece ?>.png" alt="<?= $piece ?>" id="<?= $piece ?>-piece" draggable="true">
-    </div>
+    <header>
+        <h1>Partie de Morpiong</h1>
+    </header>
+    <main>
+        <div id="score">
+            <span id="player1-score">0</span> - <span id="player2-score">0</span>
+        </div>
+        <div id="game-board">
+            <table>
+                <tr>
+                    <td data-cell="0"></td>
+                    <td data-cell="1"></td>
+                    <td data-cell="2"></td>
+                </tr>
+                <tr>
+                    <td data-cell="3"></td>
+                    <td data-cell="4"></td>
+                    <td data-cell="5"></td>
+                </tr>
+                <tr>
+                    <td data-cell="6"></td>
+                    <td data-cell="7"></td>
+                    <td data-cell="8"></td>
+                </tr>
+            </table>
+        </div>
+        <div id="pieces">
+            <image src="./assets/<?= $piece ?>.png" alt="<?= $piece ?>" id="<?= $piece ?>-piece" draggable="true">
+        </div>
+    </main>
 </body>
 </html>
