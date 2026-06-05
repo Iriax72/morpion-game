@@ -85,7 +85,7 @@ createGameBtn.addEventListener('click', () => {
                 if (result.success) {
                     if (popup && popup.parentNode) popup.parentNode.removeChild(popup);
                 } else if (result.error) {
-                    alert('Erreur lors de l\'annulation de la partie: ' + result.error);
+                    alert('La partie n\'a pas pu être annulée: ' + result.error);
                     console.error('Erreur lors de l\'annulation de la partie', token, ':', result.error);
                 } else {
                     console.error('Réponse inatendue de l\'api:', result);
@@ -164,12 +164,6 @@ joinGameBtn.addEventListener('click', () => {
 const eventSource = new EventSource('/stream.php');
 const id_notifs_received = [];
 
-alert('EventSource créée pour /stream.php');
-
-eventSource.addEventListener('open', (event) => {
-    alert('EventSource connectée et prête à recevoir des notifications');
-});
-
 eventSource.addEventListener('error', (event) => {
     console.error('Erreur EventSource:', event);
     console.error('État readyState:', eventSource.readyState);
@@ -179,11 +173,9 @@ eventSource.addEventListener('error', (event) => {
 });
 
 eventSource.addEventListener('game_start', (event) => {
-    alert('notif recue: game_start');
     // Ne pas traiter les notifs sans data
     if (!event.data) {
         console.warn('game_started event received without data');
-        alert('Une notif sans données a été recue');
         return;
     }
     const eventId = event.lastEventId || event.id;
@@ -228,8 +220,6 @@ eventSource.addEventListener('game_start', (event) => {
             }
         });
     }
-
-    alert('redirection vers game.php')
 
     // Rediriger vers la page de la partie
     window.location.href = `/game.php?game_id=${encodeURIComponent(eventData.game_id)}&user_id=${encodeURIComponent(userId)}`;
