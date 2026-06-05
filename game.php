@@ -68,11 +68,13 @@ $piece = $player_num === 1 ? 'cross' : 'circle';
 <body>
     <header>
         <h1>Partie de Morpiong</h1>
+        <div id="score">
+            <span id="player<?= $player_num ?>-score">0</span>
+             - 
+            <span id="player<?= $player_num === 1 ? 2 : 1 ?>-score">0</span>
+        </div>
     </header>
     <main>
-        <div id="score">
-            <span id="player1-score">0</span> - <span id="player2-score">0</span>
-        </div>
         <div id="game-board">
             <table>
                 <tr>
