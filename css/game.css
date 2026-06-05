@@ -12,6 +12,7 @@ body {
     height: 100vh;
     margin: 0;
     font-family: Arial, sans-serif;
+    background-color: #e5e5e5;
 }
 
 #game-board {
@@ -22,4 +23,27 @@ body {
     width: 75vw;
     height: 75vw;
     border: 2px solid #333333;
+}
+
+td {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #333333;
+    background-color: #e5e5e5;
+}
+
+#piece {
+    width: 75vw;
+    height: 75px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #333333;
+    background-color: #e5e5e5;
+}
+
+#piece img {
+    width: auto;
+    height: 80%;
 }

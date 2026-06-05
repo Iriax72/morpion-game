@@ -48,6 +48,7 @@ if ($game['player2'] !== $_GET['user_id'] && $game['created_by'] !== $_GET['user
 
 // Numéro du joueur (1 ou 2)
 $player_num = $game['created_by'] === $user_id ? 1 : 2;
+$piece = $player_num === 1 ? 'cross' : 'circle';
 ?>
 
 <!DOCTYPE html>
@@ -89,13 +90,7 @@ $player_num = $game['created_by'] === $user_id ? 1 : 2;
         </table>
     </div>
     <div id="pieces">
-        <?php 
-        if ($player_num === 1) {
-            echo '<image src="./assets/cross.png" alt="Cross" id="cross-piece" draggable="true">';
-        } else {
-            echo '<image src="./assets/circle.png" alt="Circle" id="cicle-piece" draggable="true">';
-        }
-        ?>
+        <image src="./assets/<?= $piece ?>.png" alt="<?= $piece ?>" id="<?= $piece ?>-piece" draggable="true">
     </div>
 </body>
 </html>
