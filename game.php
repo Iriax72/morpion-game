@@ -95,8 +95,8 @@ $piece = $player_num === 1 ? 'cross' : 'circle';
                 </tr>
             </table>
         </div>
-        <div id="pieces-container">
-            <image src="./assets/<?= $piece; ?>.png" alt="pièce: <?= $piece; ?>" class="piece-img" draggable="true">
+        <div id="piece-container">
+            <img src="./assets/<?= $piece; ?>.png" alt="pièce: <?= $piece; ?>" class="piece-img" draggable="true">
         </div>
     </main>
 </body>

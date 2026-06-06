@@ -75,7 +75,7 @@ table tr td {
     padding: 5px;
 }
 
-#pieces-conatainer {
+#piece-conatainer {
     width: 75vw;
     height: 75px;
     display: flex;
@@ -85,7 +85,7 @@ table tr td {
     background-color: #e5e5e5;
 }
 
-#pieces-container img {
+#piece-container img {
     width: auto;
     height: 80%;
 }
