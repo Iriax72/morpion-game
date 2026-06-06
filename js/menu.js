@@ -41,7 +41,7 @@ function createPopup(content = []) {
 
     if (addCrossBtn) {
         const crossBtn = document.createElement('button');
-        crossBtn.innerText = 'x';
+        crossBtn.innerText = 'X';
         crossBtn.classList.add('cross-btn');
         crossBtn.addEventListener('click', () => {
             document.body.removeChild(div);

@@ -61,11 +61,12 @@ body {
     width: 50px;
     height: 50px;
     background-color: red;
-    color: white;
+    color: #e5e5e5;
     font-size: 2rem;
     border: none;
     border-radius: 50%;
     z-index: 1001;
+    padding: 2px;
 }
 
 .popup-label {
@@ -75,10 +76,24 @@ body {
 
 .popup-input {
     color: black;
-    /* TODO: a completer */
+    width: 200px;
+    height: 80px;
+    background-color: #e5e5e5;
+    border: 2px solid #333333;
+    border-radius: 2px;
+    font-size: 1.4rem;
+    padding: 10px;
+    margin: 10px;
 }
 
 .popup-btn { 
     color: black;
-    /* TODO: a completer */
+    width: 200px;
+    height: 85px;
+    background-color: #222244;
+    font-size: 1.6rem;
+    border: none;
+    border-radius: 12px;
+    margin: 10px;
+    padding: 10px;
 }
