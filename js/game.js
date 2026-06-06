@@ -13,14 +13,15 @@ Il a aussi fourne playerNum qui indique si le joueur est le joueur 1 ou 2.
 // Références DOM:
 const gameBoard = document.getElementById('game-board');
 const cells = document.querySelectorAll('td[data-cell]');
-const pieceContainer = document.querySelector('#pieces-container');
-const piece = document.querySelector('.piece-img');
+const pieceContainer = document.querySelector('#piece-container');
+const piece = document.querySelector('#piece-img');
 
-// Fonctions utilistaires:
-/*function createNewPiece () {
+// Fonctions utilitaires:
+/*
+function createNewPiece () {
     const img = document.createElement('img');
     if (playerNum === 1) {
-        img.src = '/assets/circle.png';
+        img.src = './assets/circle.png';
         img.alt = 'pièce: circle';
     } else if (playerNum === 2) {
         img.src = '/assets/cross.png';
@@ -28,8 +29,8 @@ const piece = document.querySelector('.piece-img');
     } else {
         console.error('playerNum contient une valeur non-autorisée: '.concat(playerNum));
     }
-    img.draggable = 'true';
-    img.class('piece-img');
+    img.draggable = true;
+    img.classList.add('piece-img');
 
     return img;
 }
@@ -38,17 +39,18 @@ function printError (error) {
     const p = document.createElement('p');
     p.innerText = error;
     p.classList.add('error-p');
-    document.appendChild(p);
+    document.body.appendChild(p);
 }
 
 //test pour voir si la fonction marche biengg
 printError('Ceci est juste un test');
 
 
-// Envoyer une requete au serveur quand l'user joue un cou.addEventListener('dragstart', (e) => {
+// Envoyer une requete au serveur quand l'user joue un coup.
 cells.forEach(cell => {
     cell.addEventListener('dragover', (event) => {
-        fetch('', {
+        const cellId = cell.dataset.cell;
+        fetch(`/api.php?action=play&user_id=${userId}&game_id=${gameId}&cell_id=${cellId}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
