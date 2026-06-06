@@ -52,15 +52,15 @@ main {
 table {
     display: grid;
     grid-template-rows: repeat(3, 1fr);
-    width: 100%;
-    height: auto;
+    margin: 0;
+    padding: 0;
 }
 
 table tr {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    width: 100%;
-    height: auto;
+    margin: 0;
+    padding: 0;
 }
 
 table tr td {
@@ -69,6 +69,10 @@ table tr td {
     align-items: center;
     border: 1px solid #333333;
     background-color: #e5e5e5;
+    width: 20vw;
+    height: 20vw;
+    margin: 0;
+    padding: 5px;
 }
 
 #pieces {
