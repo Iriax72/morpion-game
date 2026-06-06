@@ -62,6 +62,7 @@ $piece = $player_num === 1 ? 'cross' : 'circle';
         // fournir le game_id au client
         const gameId = <?= $game_id; ?>;
         const userId = '<?= $user_id; ?>'; // TODO: sécuriser cela: n'importe qui peut se faire passer pour n'importe qui !
+        const playerNum = <?= $player_num; ?>;
     </script>
     <script src="./js/game.js" defer></script>
 </head>
@@ -69,9 +70,9 @@ $piece = $player_num === 1 ? 'cross' : 'circle';
     <header>
         <h1>Partie de Morpiong</h1>
         <div id="score">
-            <span id="player<?= $player_num ?>-score">0</span>
+            <span id="player<?= $player_num; ?>-score">0</span>
              - 
-            <span id="player<?= $player_num === 1 ? 2 : 1 ?>-score">0</span>
+            <span id="player<?= $player_num === 1 ? 2 : 1; ?>-score">0</span>
         </div>
     </header>
     <main>
@@ -94,8 +95,8 @@ $piece = $player_num === 1 ? 'cross' : 'circle';
                 </tr>
             </table>
         </div>
-        <div id="pieces">
-            <image src="./assets/<?= $piece ?>.png" alt="<?= $piece ?>" id="<?= $piece ?>-piece" draggable="true">
+        <div id="pieces-container">
+            <image src="./assets/<?= $piece; ?>.png" alt="pièce: <?= $piece; ?>" class="piece-img" draggable="true">
         </div>
     </main>
 </body>

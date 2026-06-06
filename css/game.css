@@ -75,7 +75,7 @@ table tr td {
     padding: 5px;
 }
 
-#pieces {
+#pieces-conatainer {
     width: 75vw;
     height: 75px;
     display: flex;
@@ -85,7 +85,19 @@ table tr td {
     background-color: #e5e5e5;
 }
 
-#pieces img {
+#pieces-container img {
     width: auto;
     height: 80%;
+}
+
+.error-p {
+    color: red;
+    opacity: 70%;
+    animation: monter 2s;
+}
+
+@keyframes monter {
+    0% {transform: translate(0px, 0px);};
+    50% {transform: translate(0px, 70px);};
+    100% {transform: translate(0px, 110px);};
 }

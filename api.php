@@ -20,6 +20,10 @@ TODO: régler ça
 - POST /api.php?action=read_notification&user_id=USER_ID&notification_id=NOTIFICATION_ID
     => Marque la notif comme lue dans la db
 ! Faille de sécurité : n'importe qui peut marquer une notif comme lue en se faisant passer pour un autre user qui ne ressevra alors jamais sa notif (TODO)
+
+- POST /api.php?action=play&user_id=USER_ID&game_id=GAME_ID&cell_id=CELL_ID
+    => Joue une pièce sur la case CELL_ID
+! Faille de sécurité: n'omporte qui peut jouer à la place de quelqu’un  d'autre en indiquant son user_id
 */
 
 //enlever les warning qui pourrait corrompre le json
@@ -225,6 +229,19 @@ switch($action) {
             exit;
         }
         echo json_encode(['success' => true]);
+        break;
+    
+    case 'play':
+        if (!isset($_REQUEST['user_id']) || !isset($_REQUEST['game_id']) || !isset($_REQUEST['cell_id'])) {
+            http_response_code(400);
+            echo json_encode(['error' => 'user_id, game_id ou cell_id non fourni']);
+            exit;
+        }
+        $user_id = $_REQUEST['user_id'];
+        $game_id = $_REQUEST['game_id'];
+        $cell_id = $_REQUEST['cell_id'];
+        
+        echo json_encode(['succes' => true]);
         break;
 }
 //attraper toutes les erreurs imprévues
