@@ -41,6 +41,10 @@ function printError (error) {
     document.appendChild(p);
 }
 
+//test pour voir si la fonction marche biengg
+printError('Ceci est juste un test');
+
+
 // Envoyer une requete au serveur quand l'user joue un cou.addEventListener('dragstart', (e) => {
 cells.forEach(cell => {
     cell.addEventListener('dragover', (event) => {
