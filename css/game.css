@@ -72,7 +72,11 @@ table tr td {
     width: 20vw;
     height: 20vw;
     margin: 0;
-    padding: 5px;
+}
+
+table tr td img {
+    width: 15vw;
+    height: 15vw;
 }
 
 #piece-container {

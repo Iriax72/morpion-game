@@ -23,21 +23,18 @@ let touchGhost = null;
 // Fonctions utilitaires
 function createNewPiece () {
     const img = document.createElement('img');
-    if (playerNum === 1) {
-        img.src = './assets/circle.png';
-        img.alt = 'pièce: circle';
-    } else if (playerNum === 2) {
-        img.src = '/assets/cross.png';
-        img.alt = 'pièce: cross';
-    } else {
+    if (playerNum !== 1 && playerNum !== 2) {
         console.error('playerNum contient une valeur non-autorisée: '.concat(playerNum));
     }
+    const pieceType = playerNum === 1 ? 'cross' : 'circle';
+    img.src = `./assets/${pieceType}.png`;
+    img.alt = `pièce: ${pieceType}`;
     img.draggable = true;
     img.classList.add('piece-img');
     attachPieceEvents(img);
 
     return img;
-}
+    }
 
 function attachPieceDragEvents(img) {
     img.addEventListener('dragstart', (event) => {
