@@ -49,17 +49,20 @@ function init_db(): void {
         connected_at DATETIME DEFAULT CURRENT_TIMESTAMP
     );');
 
-    //table games (id, created_at, created_by, player2)
-    $pdo->exec('
+    //table games (id, created_at, created_by, player2, gameState, first_player)
+    // chaque caractere de gameState représente une case du plateau (dans le sems de la lecture). O, X ou - si rien n'a été joué sur la case
+    $pdo->exec("
     CREATE TABLE IF NOT EXISTS games (
         id INT AUTO_INCREMENT PRIMARY KEY,
         token VARCHAR(12) UNIQUE NOT NULL,
         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
         created_by VARCHAR(32) NOT NULL,
         player2 VARCHAR(32) DEFAULT NULL,
+        gameState VARCHAR(9) DEFAULT '---------',
+        first_player INT NOT NULL,
         FOREIGN KEY (created_by) REFERENCES users(id),
-        FOREIGN KEY (player2) REFERENCES users(id)
-    );');
+        FOREIGN KEY (player2) REFERENCES users(id),
+    );"); 
 
     // table notifications (id, game_id, notified_at, notification_type, notification_data, notified_by)
     $pdo->exec('

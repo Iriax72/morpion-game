@@ -37,6 +37,9 @@ header('Content-Type: application/json; charset=utf-8');
 
 $action = $_REQUEST['action'] ?? '';
 
+// Récuperer la pdo
+$pdo = get_db_connection();
+
 try{
 
 switch($action) {
@@ -49,9 +52,6 @@ switch($action) {
         }
         $user_id = $_REQUEST['user_id'];
 
-        //recupère la pdo
-        $pdo = get_db_connection();
-
         //récupere les token déjà existants:
         $stmt = $pdo->query('SELECT token FROM games');
         $existing_tokens = $stmt->fetchAll(PDO::FETCH_COLUMN);
@@ -63,8 +63,8 @@ switch($action) {
 
         //insère le token dans la db
         try {
-            $stmt = $pdo->prepare('INSERT INTO games (token, created_by) VALUES (?, ?)');
-            $stmt->execute([$token, $user_id]);
+            $stmt = $pdo->prepare('INSERT INTO games (token, created_by, first_player) VALUES (?, ?, ?)');
+            $stmt->execute([$token, $user_id, random_bytes(1)]);
         } catch (PDOException $e) {
             http_response_code(500);
             echo json_encode(['error' => 'Erreur serveur: ' . $e->getMessage()]);
@@ -82,9 +82,6 @@ switch($action) {
         }
         $user_id = $_REQUEST['user_id'];
         $token = $_REQUEST['token'];
-
-        //récupère la pdo
-        $pdo = get_db_connection();
 
         $stmt = $pdo->prepare('SELECT id, created_by FROM games WHERE token = ?');
         $stmt->execute([$token]);
@@ -130,9 +127,6 @@ switch($action) {
         }
         $user2_id = $_REQUEST['user_id'];
         $token = $_REQUEST['token'];
-
-        //récupère la pdo
-        $pdo = get_db_connection();
 
         //cherche la partie correspondante au token
         $stmt = $pdo->prepare('SELECT id, created_by FROM games WHERE token = ?');
@@ -241,6 +235,67 @@ switch($action) {
         $game_id = $_REQUEST['game_id'];
         $cell_id = $_REQUEST['cell_id'];
         
+        $stmt = $pdo->prepare('SELECT * FROM games WHERE id = ?');
+        $stmt->execute([$game_id]);
+        $game = $stmt->fetch();
+        $gameState = $game['gameState'];
+        $first_player = $game['first_player'];
+
+        // déterminer si $user_id est le premier joueur
+        if ($first_player === 1) {
+            $is_first_player = $user_id === $game['created_by'] ? true : false;
+        } else if ($first_player === 2) {
+            $is_first_player = $user_id === $game['player2'] ? true : false;
+        } else {
+            http_response_code(500);
+            echo json_encode(['error' => 'Erreur serveur: donnée \'first_player\' dans la db invalide']);
+            exit;
+        }
+        // Déterminer si c'est le tour de $user_id
+        $player_O_turns = 0;
+        $player_X_turns = 0;
+        foreach ($gameState as $char) {
+            if ($char === '-') continue;
+            else if ($char === 'O') $player_O_turns ++;
+            else if ($char === 'X') $player_X_turns ++;
+            else {
+                http_response_code(500);
+                echo json_encode(['error' => 'Erreur serveur: donnée \'gameState\' dans ma db invalide']);
+                exit;
+            }
+        }
+        $turn = $player_O_turns === $player_X_turns ? $first_player : $first_player * -1 + 3; // x * -1 + 3 transforme 1 en 2 et 2 en 1
+        $first_player_id = $first_player === 1 ? game['created_by'] : game['player2'];
+        $is_user_turn = $first_player_id === $user_id ? true : false;
+
+        // Empecher de jouer si ce n'est pas le tour de $user_id
+        if (!$is_user_turn) {
+            http_response_code(403);
+            echo json_encode(['error' => 'Ce n\'est pas al vous de jouer']);
+            exit;
+        }
+
+        // Empecher de jouer à une case déjà pleine
+        if ($gameState[$cell_id] !== '-') {
+            http_response_code(403);
+            echo json_encode(['error' => 'Cette case est déjà pleine']);
+            exit;
+        }
+        
+        // Inserer le nouveau coup dans la db
+        $new_game_state = '---------';
+        try {
+            $stmt = $pdo->prepare('UPDATE games SET gameState = ? WHERE id = ?');
+            $stmt->execute([$new_game_state, $game_id]);
+        } catch (PDOException $e) {
+            http_response_code(500);
+            echo json_encode(['error' => "Erreur d'insertion dans la db: $e"]);
+            exit;
+        }
+
+        // TODO: Vérifier si un joueur n'a pas gagné
+
+        // TODO: envoyer une notif à l'autre joueur pour lui infoquer que son adversaire à joué (via la table notifications et /stream.php)
         echo json_encode(['succes' => true]);
         break;
 }
