@@ -14,10 +14,9 @@ Il a aussi fourne playerNum qui indique si le joueur est le joueur 1 ou 2.
 const gameBoard = document.getElementById('game-board');
 const cells = document.querySelectorAll('td[data-cell]');
 const pieceContainer = document.querySelector('#piece-container');
-const piece = document.querySelector('#piece-img');
+let piece = document.querySelector('#piece-img');
 
-// Fonctions utilitaires:
-/*
+// Fonctions utilitaires
 function createNewPiece () {
     const img = document.createElement('img');
     if (playerNum === 1) {
@@ -31,10 +30,17 @@ function createNewPiece () {
     }
     img.draggable = true;
     img.classList.add('piece-img');
+    attachPieceDragEvents(img);
 
     return img;
 }
-*/
+
+function attachPieceDragEvents(img) {
+    img.addEventListener('dragstart', (event) => {
+        event.dataTransfer.setData('text/plain', 'piece');
+    });
+}
+
 function printError (error) {
     const p = document.createElement('p');
     p.innerText = error;
@@ -45,14 +51,16 @@ function printError (error) {
     }, 3000);
 }
 
-//test pour voir si la fonction marche biengg
-printError('Ceci est juste un test');
-
-
 // Envoyer une requete au serveur quand l'user joue un coup.
 cells.forEach(cell => {
     cell.addEventListener('dragover', (event) => {
+        event.preventDefault();
+    });
+
+    cell.addEventListener('drop', (event) => {
+        event.preventDefault();
         const cellId = cell.dataset.cell;
+
         fetch(`/api.php?action=play&user_id=${userId}&game_id=${gameId}&cell_id=${cellId}`, {
             method: 'POST',
             headers: {
@@ -62,7 +70,6 @@ cells.forEach(cell => {
         .then(response => response.json)
         .then(data => {
             if (data.succes) {
-                event.preventDefault();
                 cell.appendChild(piece);
                 piece = createNewPiece();
                 pieceContainer.appendChild(piece);
@@ -71,6 +78,11 @@ cells.forEach(cell => {
             } else {
                 console.error('réponse de l\'api sans succes ni error');
             }
+        })
+        .catch((error) => {
+            printError('Erreur réseau: ' + error.message);
         });
     });
 });
+
+attachPieceDragEvents(piece);
