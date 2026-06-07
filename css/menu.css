@@ -20,8 +20,6 @@ body {
     font-size: 2.1rem;
     border: 5px solid black;
     border-radius: 20px;
-    transition-duration: 4ms;
-    transition-timing-function: ease;
     animation: turn 3s infinite ease;
 }
 
