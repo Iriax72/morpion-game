@@ -42,7 +42,7 @@ function printError (error) {
     document.body.appendChild(p);
     setTimeout(() => {
         p.remove()
-    }, 2000);
+    }, 3000);
 }
 
 //test pour voir si la fonction marche biengg

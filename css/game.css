@@ -91,22 +91,23 @@ table tr td {
 }
 
 .error-p {
+    font-size: 1.6rem;
+    color: red;
     position: fixed;
     left: 50vw;
     transform: translate(-50%, 0);
-    top: 400px;
-    color: red;
-    opacity: 0.7;
-    animation: monter 2s ease forwards;
+    top: 300px;
+    opacity: 1;
+    animation: monter 3s ease forwards;
 }
 
 @keyframes monter {
     from {
         transform: translate(-50%, 0);
-        opacity: 0.7;
+        opacity: 1;
     }
     to {
-        transform: translate(-50%, -110px);
+        transform: translate(-50%, -90px);
         opacity: 0;
     }
 }
