@@ -40,6 +40,9 @@ function printError (error) {
     p.innerText = error;
     p.classList.add('error-p');
     document.body.appendChild(p);
+    setTimeout(() => {
+        p.remove()
+    }, 2000);
 }
 
 //test pour voir si la fonction marche biengg
