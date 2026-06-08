@@ -61,7 +61,7 @@ function init_db(): void {
         gameState VARCHAR(9) DEFAULT '---------',
         first_player INT NOT NULL,
         FOREIGN KEY (created_by) REFERENCES users(id),
-        FOREIGN KEY (player2) REFERENCES users(id),
+        FOREIGN KEY (player2) REFERENCES users(id)
     );"); 
 
     // table notifications (id, game_id, notified_at, notification_type, notification_data, notified_by)
