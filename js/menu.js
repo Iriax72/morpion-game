@@ -64,6 +64,7 @@ function requestToken () {
         if (data.success) {
             return data.token;
         } else {
+            // tout cette partie ne foncionne pas comme prévu. TODO
             try_again_btn = document.createElement('button');
             try_again_btn.classList.add('popup-btn');
             try_again_btn.innerText = 'réessayer';
