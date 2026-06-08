@@ -52,6 +52,14 @@ switch($action) {
         }
         $user_id = $_REQUEST['user_id'];
 
+        // Vérifie que l'iser existe
+        $stmt = $pdo->query('SELECT * FROM users WHERE id = ?');
+        $existing_user = $stmt->fetch();
+        if (!$existing_user) {
+            http_response_code(401);
+            echo json_encode(['error' => 'L\'id d\'utilisateur entré n\'existe pas ']);
+            exit;
+        }
         //récupere les token déjà existants:
         $stmt = $pdo->query('SELECT token FROM games');
         $existing_tokens = $stmt->fetchAll(PDO::FETCH_COLUMN);
