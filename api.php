@@ -65,7 +65,7 @@ switch($action) {
         //insère le token dans la db
         try {
             $stmt = $pdo->prepare('INSERT INTO games (token, created_by, first_player) VALUES (?, ?, ?)');
-            $stmt->execute([$token, $user_id, random_bytes(1)]);
+            $stmt->execute([$token, $user_id, random_int(1, 2)]);
         } catch (PDOException $e) {
             http_response_code(500);
             echo json_encode(['error' => 'Erreur serveur: ' . $e->getMessage()]);
