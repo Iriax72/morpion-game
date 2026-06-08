@@ -52,13 +52,7 @@ function createPopup(content = []) {
     return div;
 }
 
-// Event listeners:
-createGameBtn.addEventListener('click', () => {
-    // afficher message d'attente
-    let popup = createPopup(['En attente de votre code d\'accès...']);
-    document.body.appendChild(popup);
-
-    // demander un token au serveur
+function requestToken () {
     fetch(`/api.php?action=create_game_token&user_id=${userId}`, {
         method: 'POST',
         headers: {
@@ -67,48 +61,63 @@ createGameBtn.addEventListener('click', () => {
     })
     .then(response => response.json())
     .then(data => {
-        if (data.success) const token = data.token;
-        else {
-            try_again_btn = document.createElement('btn');
+        if (data.success) {
+            return data.token;
+        } else {
+            try_again_btn = document.createElement('button');
             try_again_btn.classList.add('popup-btn');
-            create_popup('CROSS_BTN', 'Le serveur n\'a pas pu générer un token', try_again_btn)
-        }
-
-        // construire le bouton annuler qui utilisera le token reçu
-        const annuler = document.createElement('button');
-        annuler.innerText = 'Annuler';
-        annuler.classList.add('popup-btn');
-        annuler.addEventListener('click', () => {
-            fetch(`/api.php?action=cancel_game&user_id=${userId}&token=${token}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(result => {
-                if (result.success) {
-                    if (popup && popup.parentNode) popup.parentNode.removeChild(popup);
-                } else if (result.error) {
-                    alert('La partie n\'a pas pu être annulée: ' + result.error);
-                    console.error('Erreur lors de l\'annulation de la partie', token, ':', result.error);
-                } else {
-                    console.error('Réponse inatendue de l\'api:', result);
-                }
+            try_again_btn.innerText = 'réessayer';
+            try_again_btn.addEventListener('click', () => {
+                requestToken()
             });
-        });
-
-        // remplacer le popup d'attente par le popup contenant le token et le bouton annuler
-        if (popup && popup.parentNode) popup.parentNode.removeChild(popup);
-        popup = createPopup([`Code d'acces: ${token}`, annuler]);
-        document.body.appendChild(popup);
+            createPopup('CROSS_BTN', 'Le serveur n\'a pas pu générer de token', try_again_btn);
+        }
     })
-    .catch(err => {
-        console.error('Erreur lors de la création du token:', err);
-        if (popup && popup.parentNode) popup.parentNode.removeChild(popup);
-        const errPopup = createPopup(['Erreur lors de la création de la partie.']);
-        document.body.appendChild(errPopup);
-    });
+}
+
+// Event listeners:
+createGameBtn.addEventListener('click', () => {
+    // afficher message d'attente
+    let popup = createPopup(['En attente de votre code d\'accès...']);
+    document.body.appendChild(popup);
+
+    // demander un token au serveur
+    const token = requestToken();
+
+    // construire le bouton annuler qui utilisera le token reçu
+    const annuler = document.createElement('button');
+    annuler.innerText = 'Annuler';
+    annuler.classList.add('popup-btn');
+    annuler.addEventListener('click', () => {
+        fetch(`/api.php?action=cancel_game&user_id=${userId}&token=${token}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                if (popup && popup.parentNode) popup.parentNode.removeChild(popup);
+            } else if (result.error) {
+                alert('La partie n\'a pas pu être annulée: ' + result.error);
+                console.error('Erreur lors de l\'annulation de la partie', token, ':', result.error);
+            } else {
+                console.error('Réponse inatendue de l\'api:', result);
+            }
+        });
+     });
+
+    // remplacer le popup d'attente par le popup contenant le token et le bouton annuler
+    if (popup && popup.parentNode) popup.parentNode.removeChild(popup);
+    popup = createPopup([`Code d'acces: ${token}`, annuler]);
+    document.body.appendChild(popup);
+})
+.catch(err => {
+    console.error('Erreur lors de la création du token:', err);
+    if (popup && popup.parentNode) popup.parentNode.removeChild(popup);
+    const errPopup = createPopup(['Erreur lors de la création de la partie.']);
+    document.body.appendChild(errPopup);
 });
 
 joinGameBtn.addEventListener('click', () => {
