@@ -67,7 +67,12 @@ createGameBtn.addEventListener('click', () => {
     })
     .then(response => response.json())
     .then(data => {
-        const token = data.token;
+        if (data.success) const token = data.token;
+        else {
+            try_again_btn = document.createElement('btn');
+            try_again_btn.classList.add('popup-btn');
+            create_popup('CROSS_BTN', 'Le serveur n\'a pas pu générer un token', try_again_btn)
+        }
 
         // construire le bouton annuler qui utilisera le token reçu
         const annuler = document.createElement('button');

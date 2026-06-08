@@ -57,6 +57,7 @@ switch($action) {
         $existing_tokens = $stmt->fetchAll(PDO::FETCH_COLUMN);
 
         //crée un nouveau token unique
+        $token = '';
         while (!$token || in_array($token, $existing_tokens)) {
             $token = bin2hex(random_bytes(6));
         }
